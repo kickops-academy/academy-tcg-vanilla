@@ -1,0 +1,59 @@
+/**
+  DESAFIOS:
+  - Podemos estruturar melhor nosso CSS para facilitar a manutenção?
+  - Como podemos tornar mais agradável o menu de filtros?
+  - Podemos melhorar a apresentação dos cards?
+  - E quanto a responsividade? Podemos fazer o layout se adaptar a diferentes tamanhos de tela?
+ */
+:root {
+  --primary: #335a9f;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.blue-text {
+  color: #0000ff;
+}
+
+header {
+  color: var(--primary);
+  background: #ddd;
+  font-size: 2rem;
+  padding: 1rem;
+}
+
+header small {
+  font-size: 0.5em;
+}
+
+section {
+  display: flex;
+  flex-direction: row;
+}
+
+main {
+  background-color: rgba(255, 180, 0, 0.5);
+  flex: 1;
+}
+
+aside {
+  max-width: 20rem;
+  background-color: #212121;
+  color: #ffffff;
+  padding: 1rem;
+
+  img {
+    width: 3rem;
+  }
+}
+
+footer {
+  background: #ddd;
+  padding: 1rem;
+}

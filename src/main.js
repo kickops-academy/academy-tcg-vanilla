@@ -1,185 +1,110 @@
-/**
- * @type {HTMLElement}
- */
 const APP_MENU = document.querySelector("#menu");
+const APP_STAGE = document.querySelector("#stage");
+const APP_FILTER_NAME = document.querySelector("#filter-name");
 
-/**
- * @type {HTMLElement}
- */
-const APP_MAIN = document.querySelector("#main");
+const APP_LOADER = document.querySelector("#loader");
+APP_LOADER.classList.add("hidden");
 
-/**
- * @type {string}
- */
-const API_URL = "http://localhost:3000";
+const STORE = {};
+const APP_STORE = new Proxy(STORE, {
+  set(target, prop, value) {
+    target[prop] = value;
 
-/**
- * @type {Record<string, string>}
- */
-let FILTERS_DATA = {};
+    if (prop === "type") {
+      APP_FILTER_NAME.innerHTML = value
+        ? `Filter: ${value}`
+        : `No filter applied`;
 
-/**
- * @type {Proxy<Record<string, string>>}
- */
-const FILTERS = new Proxy(FILTERS_DATA, {
-  set(target, property, value) {
-    target[property] = value;
-
-
-    APP_MAIN.childNodes.forEach((node) => {
-      node.remove();
-    });
-
-    if (value) {
-      const filtered = POKEMONS.filter((pokemon) => {
-        return pokemon.types.includes(value);
-      });
-
-      if (filtered.length === 0) {
-        const noResults = document.createElement("p");
-        noResults.innerText = "No results found";
-        APP_MAIN.appendChild(noResults);
+      if (value) {
+        loadPokemonByType(value);
       } else {
-        filtered.forEach(async (pokemon) => {
-          const cardImg = document.createElement("img");
-          cardImg.src = `${pokemon.image}/low.png`;
-          cardImg.alt = pokemon.name;
-          cardImg.addEventListener("load", (evt) => {
-            APP_MAIN.appendChild(cardImg);
-          });
-          cardImg.addEventListener("error", (evt) => {
-            console.log("Error loading image:" + pokemon.name);
-          });
-        });
+        APP_STAGE.innerHTML = "No cards.";
       }
     }
 
-    return true;
-  },
-  get(target, property) {
-    return target[property];
-  }
-});
-
-/**
- * @type {Array<Record<string, string>>}
- */
-let POKEMON_LIST = [];
-
-/**
- * @type {Proxy<Array<Record<string, string>>>}
- */
-const POKEMONS = new Proxy(POKEMON_LIST, {
-  set(target, property, value) {
-    target[property] = value;
-
-    const total = document.querySelector("#total");
-    if (total) {
-      total.innerText = target.length;
+    if (prop === "cards") {
+      console.log(`Setting cards:`, value);
+      renderCards(value);
     }
 
     return true;
   },
-  get(target, property) {
-    return target[property];
-  } 
 });
 
-/**
- * @type {Record<string, string>}
- */
 const POKEMON_TYPES = {
-  "Normal": "⚪️",
-  "Fire": "🔥",
-  "Fighting": "🥊",
-  "Water": "💧",
-  "Flying": "🕊️",
-  "Grass": "🌿",
-  "Poison": "☠️",
-  "Electric": "⚡️",
-  "Ground": "🌍",
-  "Psychic": "🔮",
-  "Rock": "🪨",
-  "Ice": "❄️",
-  "Bug": "🐛",
-  "Dragon": "🐉",
-  "Ghost": "👻",
-  "Dark": "🌑",
-  "Steel": "⚙️",
-  "Fairy": "🧚"
+  Colorless: "⚪️",
+  Darkness: "🌑",
+  Dragon: "🐉",
+  Fairy: "🧚",
+  Fighting: "🥊",
+  Fire: "🔥",
+  Grass: "🌿",
+  Lightning: "⚡️",
+  Metal: "⚙️",
+  Psychic: "🔮",
+  Water: "💧",
 };
 
-function createReloadButton() {
-  const button = document.createElement("button");
-  button.innerText = "Load more pokemons";
-  button.addEventListener("click", () => {
-    loadPokemons();
+function renderCards(cards) {
+  APP_STAGE.innerHTML = "";
+  cards.forEach((card) => {
+    const cardImage = document.createElement("img");
+    cardImage.src = `${card.image}/low.png`;
+    cardImage.alt = card.name;
+    cardImage.addEventListener("load", () => {
+      APP_STAGE.appendChild(cardImage);
+    });
+    cardImage.addEventListener("error", () => {
+      console.error(`Failed to load image for card: ${card.name}`);
+    });
   });
-  APP_MENU.appendChild(button);
 }
 
-function createMenuButton(label, value) {
-  const button = document.createElement("button");
-  button.innerText = `${value} ${label}`;
-  button.addEventListener("click", () => {
-    FILTERS.type = label;
-  });
-  APP_MENU.appendChild(button);
-}
+async function loadPokemonByType(type) {
+  APP_LOADER.classList.remove("hidden");
 
-/**
- * Carrega uma quantidade específica de cartas de pokémons de uma categoria.
- * 
- * Desafios:
- * - Como podemos melhorar a experiência do usuário ao carregar os pokémons?
- * - Como podemos tratar erros de rede ou falhas na API?
- * - Como podemos verificar se os dados retornados são válidos?
- * - Se o número de parâmetros for maior que 2, isso pode ser problemático, como podemos prevenir isso?
- * - Existe uma forma de validar os parâmetros passados para a função?
- * 
- * @param {*} amount 
- * @param {*} category 
- */
-async function loadPokemons(
-  amount = 20, 
-  category = "Pokemon"
-) {
-  APP_MAIN.childNodes.forEach((node) => {
-    node.remove();
-  });
+  try {
+    const response = await fetch(
+      `http://localhost:3000/card/pokemon/${type}?amount=8`,
+      {
+        method: "GET",
+      }
+    );
 
-  const message = document.createElement("p");
-  message.innerText = "Loading pokemons...";
-  APP_MAIN.appendChild(message);
-  
-  const requestUrl = new URL(`${API_URL}/card/pokemon/random`);
-  requestUrl.searchParams.set("amount", amount);
-  requestUrl.searchParams.set("category", category);
-
-  // Se o request fetch falhar, o que acontece? Como podemos tratar isso?
-  const pokemons = await fetch(requestUrl.toString(), {
-    method: "GET"
-  });
-
-  const data = await pokemons.json();
-  
-  // Existe uma forma de verificar se data é um array? Se sim, como?
-  if (data && data.length > 0) {
-    POKEMONS.push(...data);
+    const cardData = await response?.json();
+    if (Array.isArray(cardData)) {
+      // Clear APP_CARDS before adding new data
+      APP_STORE.cards = cardData;
+    }
+  } catch (err) {
+    console.error(`Error loading Pokémon of type ${type}:`, err);
+  } finally {
+    APP_LOADER.classList.add("hidden");
   }
-
-  message.innerText = "Pokemons loaded successfully!";
 }
 
-function mapCategoriesToMenuButtons() {
-  // Existe uma interface melhor para mapear os tipos de Pokémon?
-  // Botões são a melhor forma?
-  // Como podemos melhorar a usabilidade do menu?
-  // Como podemos saber se o usuário clicou em um botão de tipo e indicar isso visualmente?
-  Object.entries(POKEMON_TYPES).map(([label, value]) => {
-    createMenuButton(label, value);
+function generateButton(type, icon) {
+  const button = document.createElement("button");
+  button.textContent = `${icon} ${type}`;
+  button.addEventListener("click", () => {
+    if (APP_STORE.type === type) {
+      APP_STORE.type = null;
+    } else {
+      APP_STORE.type = type;
+    }
+  });
+  APP_MENU.appendChild(button);
+}
+
+function mapTypesToButtons() {
+  Object.entries(POKEMON_TYPES).forEach(([type, icon]) => {
+    console.log(`Mapping type: ${type} with icon: ${icon}`);
+    generateButton(type, icon);
   });
 }
 
-createReloadButton();
-mapCategoriesToMenuButtons();
+function bootstrap() {
+  mapTypesToButtons();
+}
+
+bootstrap();

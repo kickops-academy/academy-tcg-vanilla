@@ -3,35 +3,33 @@
   <head>
     <meta charset="UTF-8">
     <title>Pokemon TCG</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bitcount:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="./src/style.css">
   </head>
   <body>
-    <!--
-      DESAFIOS:
-      - Como podemos melhorar a experiência do usuário, por exemplo, ao carregar mais pokémons?
-      - Como podemos melhorar a visualização do que temos carregado?
-      - Seria bacana se o layout fosse responsivo, como podemos fazer isso?
-      - Como fazer o layout ocupar a tela inteira, com o rodapé sempre na parte inferior?
-      - Seria possível exibir a imagem em alta resolução, assim como a de baixa resolução, de forma responsiva? Se sim, como fazer? Sem usar CSS ou JavaScript?
-    -->
-    <header id="header">
-      <h1>Pokemon TCG</h1>
-      <small>Pokémons caregados: <span id="total">0</span></small>
-    </header>
+    <div id="app">
+      <header id="header">
+        <h1>Poké TCG Cards</h1>
+      </header>
 
-    <section>
-      <aside id="menu">
+      <section>
+        <aside id="menu"></aside>
+        <main id="main">
+          <h3 id="filter-name">No filter applied</h3>
+          <span id="loader" class="loading"></span>
+          <div id="stage"></div>
+        </main>
+      </section>
 
-      </aside>
-      <main id="main">
-
-      </main>
-    </section>
-
-    <footer>
-      <p>Kickops 2025</p>
-    </footer>
+      <footer>
+        <p>&copy; Kickops 2025</p>
+      </footer>
+    </div>
 
     <script defer src="./src/main.js"></script>
   </body>

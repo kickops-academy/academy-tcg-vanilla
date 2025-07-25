@@ -1,59 +1,182 @@
-/**
-  DESAFIOS:
-  - Podemos estruturar melhor nosso CSS para facilitar a manutenção?
-  - Como podemos tornar mais agradável o menu de filtros?
-  - Podemos melhorar a apresentação dos cards?
-  - E quanto a responsividade? Podemos fazer o layout se adaptar a diferentes tamanhos de tela?
- */
 :root {
-  --primary: #335a9f;
-  font-family: Arial, sans-serif;
-  font-size: 16px;
+  --ko-yellow: #feff94;
+
+  color-scheme: dark;
+  color: #ffffff;
+  background-color: #000000;
+
+  font-family: "Bitcount", sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.25;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes loading {
+  0% {
+    content: "Loading";
+  }
+  
+  25% {
+    content: "Loading.";
+  }
+  
+  50% {
+    content: "Loading..";
+  }
+  
+  75% {
+    content: "Loading...";
+  }
+  
+  100% {
+    content: "Loading...";
+  }
 }
 
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-.blue-text {
-  color: #0000ff;
+#app {
+  width: 100%;
+  max-width: 720px;
+  min-height: 100dvh;
+  padding: 1rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 header {
-  color: var(--primary);
-  background: #ddd;
-  font-size: 2rem;
-  padding: 1rem;
-}
+  border-bottom: 1px solid color-mix(in srgb, var(--ko-yellow) 25%, #000000);
 
-header small {
-  font-size: 0.5em;
+  h1 {
+    color: var(--ko-yellow);
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 1rem;
+  }
 }
 
 section {
   display: flex;
-  flex-direction: row;
-}
-
-main {
-  background-color: rgba(255, 180, 0, 0.5);
+  flex-direction: column;
+  gap: 1rem;
   flex: 1;
+
+  aside {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    button {
+      border: 1px solid color-mix(in srgb, var(--ko-yellow) 25%, #000000);
+      background-color: transparent;
+      color: var(--ko-yellow);
+      font-family: inherit;
+      font-size: 1rem;
+      padding: 0.25em 0.5em;
+      border-radius: 0.5em;
+      cursor: pointer;
+      transition: all .3s ease;
+      
+      &:hover {
+        background-color: color-mix(in srgb, var(--ko-yellow) 25%, #000000);
+      }
+    }
+  }
+
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
 }
 
-aside {
-  max-width: 20rem;
-  background-color: #212121;
-  color: #ffffff;
-  padding: 1rem;
+span.loading {
+  &:after {
+    content: "";
+    display: inline-block;
+    color: var(--ko-yellow);
+    font-size: 1rem;
+    font-weight: 200;
+    animation: loading 0.5s infinite steps(3);
+  }
 
+  &.hidden {
+    display: none;
+  }
+}
+
+#filter-name {
+  color: var(--ko-yellow);
+  font-size: 1rem;
+}
+
+#stage {
+  color: color-mix(in srgb, var(--ko-yellow) 45%, #000000);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  row-gap: 1rem;
+  column-gap: 1rem;
+  font-weight: 300;
+  
   img {
-    width: 3rem;
+    width: 100%;
+    margin: 0;
+    padding: 0;
   }
 }
 
 footer {
-  background: #ddd;
+  border-top: 1px solid color-mix(in srgb, var(--ko-yellow) 25%, #000000);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   padding: 1rem;
+
+  p {
+    color: color-mix(in srgb, var(--ko-yellow) 25%, #000000);
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+  }
+}
+
+@media (min-width: 768px) {
+  section {
+    flex-direction: row;
+
+    aside {
+      width: 25%;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+    }
+
+    main {
+      width: 75%;
+    }
+  }
+
+  #stage {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
 }
